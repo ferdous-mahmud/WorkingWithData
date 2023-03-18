@@ -17,11 +17,9 @@ struct ContentView: View {
         sortDescriptors: [],
         animation: .default)
     private var customers: FetchedResults<Customer>
-
-
-//    let newLocation = Location(context: viewContext)
-//    newLocation.name = "9000 Example Road"
-//    newLocation.name = "(212) 555 1234"
+    
+    
+    @State private var showingAlert = false
     
     
     var body: some View {
@@ -34,18 +32,47 @@ struct ContentView: View {
                     Text(customer.fullName ?? "Unknown")
                 }
             }
-            Button("Add Dish"){
+            HStack{
+                Spacer()
+                Button("Add Dish"){
+                    
+                    let newDish = Dish(context: viewContext)
+                    newDish.name = "Apple Pie"
+                    newDish.size = "Extra Large"
+                    newDish.price = 10
+                }
+                .padding(6)
+                .background(.yellow)
+                .cornerRadius(5)
                 
-                let newDish = Dish(context: viewContext)
-                newDish.name = "Apple Pie"
-                newDish.size = "Extra Large"
-                newDish.price = 10
+                Spacer()
+                Spacer()
+                
+                Button("Add Customer"){
+                    
+                    let newCustomer = Customer(context: viewContext)
+                    newCustomer.fullName = "Ferdous"
+                    
+                }
+                .padding(6)
+                .background(.yellow)
+                .cornerRadius(5)
+                Spacer()
             }
-            Button("Add Customer"){
-                
-                let newCustomer = Customer(context: viewContext)
-                newCustomer.fullName = "Ferdous"
-
+            Button("Save Changes"){
+                guard viewContext.hasChanges else { return }
+                do {
+                    try viewContext.save()
+                    showingAlert = true
+                } catch (let error) {
+                    print("Error for saving Core Data! \(error.localizedDescription)")
+                }
+            }
+            .padding(10)
+            .background(.green)
+            .cornerRadius(10)
+            .alert("Saved!", isPresented: $showingAlert) {
+                Button("OK", role: .cancel) { }
             }
         }
         .padding()
