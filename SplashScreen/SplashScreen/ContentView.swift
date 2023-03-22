@@ -10,10 +10,22 @@ import WebKit
 
 struct ContentView: View {
     var body: some View {
-        ZStack{
-            WebView(url: URL(string: "https://app.mycer.it/cns3")!)
+        if Reachability.isConnectedToNetwork(){
+            ZStack{
+                WebView(url: URL(string: "https://app.mycer.it/cns3")!)
+            }
+            .ignoresSafeArea()
+        } else {
+            VStack {
+                Image(systemName: "wifi.slash")
+                    .font(.system(size: 80))
+                Text("No Internet Connection")
+                    .padding(.top)
+                    .bold()
+                Text("Please check your connection and try again.")
+            }
         }
-        .ignoresSafeArea()
+        
     }
 }
 
@@ -27,6 +39,7 @@ struct WebView: UIViewRepresentable {
  
     func updateUIView(_ webView: WKWebView, context: Context) {
         let request = URLRequest(url: url)
+        webView.allowsBackForwardNavigationGestures = true
         webView.load(request)
     }
 }
@@ -36,3 +49,4 @@ struct ContentView_Previews: PreviewProvider {
         ContentView()
     }
 }
+
